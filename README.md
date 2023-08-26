@@ -1,3 +1,5 @@
+[![Run Tests](https://github.com/tpg/yerp/actions/workflows/tests.yml/badge.svg)](https://github.com/tpg/yerp/actions/workflows/tests.yml)
+
 # Yerp
 
 Yerp is an object property validation library for PHP. It was written to provide simply validation for some other libraries, but it has some value elsewhere.
