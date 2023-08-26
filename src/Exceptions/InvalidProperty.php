@@ -8,7 +8,6 @@ use Exception;
 
 class InvalidProperty extends Exception
 {
-
     /**
      * @param string $property
      */

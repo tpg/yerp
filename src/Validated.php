@@ -16,7 +16,7 @@ readonly class Validated
 {
     /**
      * @param array<ReflectionProperty> $properties
-     * @param array<string, <class-string<TRuleClass>, bool>> $results
+     * @param array<string, array<class-string<TRuleClass>, bool>> $results
      */
     public function __construct(protected array $properties, protected array $results)
     {
@@ -36,8 +36,9 @@ readonly class Validated
     }
 
     /**
-     * @param string<class-string> $rule
-     * @throws InvalidRuleException|InvalidProperty
+     * @param string $property
+     * @param class-string<TRuleClass> $rule
+     * @throws InvalidProperty|InvalidRuleException
      */
     public function property(string $property, string $rule): Result
     {

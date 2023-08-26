@@ -10,8 +10,7 @@ readonly class Result implements \Stringable
         protected bool $outcome,
         protected ?string $success = null,
         protected ?string $failure = null
-    )
-    {
+    ) {
     }
 
     public function passed(): bool

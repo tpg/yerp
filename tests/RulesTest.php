@@ -5,7 +5,7 @@ declare(strict_types=1);
 use TPG\Yerp\Rules;
 
 beforeEach(function () {
-    $testClass = new Class {
+    $testClass = new class () {
         #[Rules\ArrayKey(key: 'test')]
         public array $arrayKeyTrue = ['test' => 'example'];
         #[Rules\ArrayKey(key: 'test')]

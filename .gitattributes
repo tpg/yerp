@@ -3,3 +3,4 @@
 /.github
 /tests export-ignore
 /phpunit.xml.dist export-ignore
+/pint.json

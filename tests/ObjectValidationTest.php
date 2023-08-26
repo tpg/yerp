@@ -7,7 +7,7 @@ use TPG\Yerp\Validator;
 
 it('can validate object properties', function () {
 
-    $object = new class {
+    $object = new class () {
         #[Rules\Required]
         public string $name = 'John Doe';
         #[Rules\Required, Rules\Email]
@@ -25,7 +25,7 @@ it('can validate object properties', function () {
 
 it('can have custom validation messages', function () {
 
-    $object = new class {
+    $object = new class () {
         #[Rules\Required(
             success: 'success message',
             failure: 'failure message',
@@ -51,7 +51,7 @@ it('can have custom validation messages', function () {
 
 it('can stop of a rule marked as last', function () {
 
-    $object = new class {
+    $object = new class () {
         #[Rules\Required, Rules\Equal('email@example2.test', last: true), Rules\Email]
         public string $email = 'email@example.test';
     };
@@ -65,7 +65,7 @@ it('can stop of a rule marked as last', function () {
 
 test('it will throw an exception if a property doesn\'t exist', function () {
 
-    $object = new class {
+    $object = new class () {
         #[Rules\Required]
         public string $name = 'John Doe';
     };
@@ -79,7 +79,7 @@ test('it will throw an exception if a property doesn\'t exist', function () {
 
 test('it will throw an exception if a rule hasn\'t been applied.', function () {
 
-    $object = new class {
+    $object = new class () {
         #[Rules\Required]
         public string $email = 'text@example.com';
     };

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TPG\Yerp\Exceptions;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 
 class InvalidRuleException extends Exception
 {

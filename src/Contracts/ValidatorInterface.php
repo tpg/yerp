@@ -6,5 +6,4 @@ namespace TPG\Yerp\Contracts;
 
 interface ValidatorInterface
 {
-
 }
