@@ -21,10 +21,10 @@ class Length extends AbstractRule
             throw new \RuntimeException('A minimum or maximum length must be specified.');
         }
 
-        $length = strlen((string)$value);
-        if (is_array($value)) {
-            $length = count($value);
-        }
+        $length = match(is_array($value)) {
+            true => count($value),
+            false => strlen((string)$value),
+        };
 
         $min = !$this->min || $length >= $this->min;
         $max = !$this->max || $length <= $this->max;

@@ -23,6 +23,33 @@ it('can validate object properties', function () {
         ->and($validated->property('email', Rules\Email::class)->passed())->toBeFalse();
 });
 
+it('can validate an entire property', function () {
+    $object = new class {
+        #[Rules\Equal('test@example.com'), Rules\Email]
+        public string $email = 'test@example.com';
+    };
+
+    $validator = new Validator($object);
+    $validated = $validator->validate();
+    expect($validated->property('email')->passed())->toBeTrue();
+});
+
+it('can validate the entire object', function  () {
+    $object = new class {
+        #[Rules\Required]
+        public string $firstName = 'John';
+        #[Rules\Required]
+        public string $lastName = 'Doe';
+        #[Rules\Required, Rules\Email]
+        public string $emailAddress = 'bad-email';
+    };
+
+    $validated = (new Validator($object))->validate();
+
+    expect($validated->passed())->toBeFalse()
+        ->and($validated->failed())->toBeTrue();
+});
+
 it('can have custom validation messages', function () {
 
     $object = new class () {
@@ -49,10 +76,10 @@ it('can have custom validation messages', function () {
         ->and((string)$validated->property('name', Rules\Required::class))->toEqual('success message');
 });
 
-it('can stop of a rule marked as last', function () {
+it('can stop on a failed rule marked as last', function () {
 
     $object = new class () {
-        #[Rules\Required, Rules\Equal('email@example2.test', last: true), Rules\Email]
+        #[Rules\Required, Rules\Equal('email@different.test', last: true), Rules\Email]
         public string $email = 'email@example.test';
     };
 

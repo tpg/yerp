@@ -37,17 +37,34 @@ readonly class Validated
 
     /**
      * @param string $property
-     * @param class-string<TRuleClass> $rule
+     * @param class-string<TRuleClass>|null $rule
      * @throws InvalidProperty|InvalidRuleException
      */
-    public function property(string $property, string $rule): Result
+    public function property(string $property, string $rule = null): Result
     {
         $result = $this->results($property);
+
+        if (! $rule) {
+            $filter = array_filter($result, fn (Result $result) => $result->failed());
+            return new Result(count($filter) === 0);
+        }
 
         if (! array_key_exists($rule, $result)) {
             throw new InvalidRuleException($rule);
         }
 
         return $result[$rule];
+    }
+
+    public function passed(): bool
+    {
+        $failures = array_filter($this->properties, fn (ReflectionProperty $property) => $this->property($property->name)->failed());
+
+        return count($failures) === 0;
+    }
+
+    public function failed(): bool
+    {
+        return ! $this->passed();
     }
 }
