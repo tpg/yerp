@@ -1,0 +1,39 @@
+{
+    "name": "thepublicgood/validator",
+    "description": "Simple PHP attribute validator",
+    "keywords": ["validation", "attributes"],
+    "authors": [
+        {
+            "name": "THEPUBLICGOOD",
+            "email": "makers@thepublicgood.dev",
+            "homepage": "https://thepublicgood.dev"
+        }
+    ],
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.11",
+        "pestphp/pest": "^2.16",
+        "spatie/ray": "^1.37"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TPG\\Yerp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TPG\\Validator\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
