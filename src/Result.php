@@ -6,7 +6,11 @@ namespace TPG\Yerp;
 
 readonly class Result implements \Stringable
 {
-    public function __construct(protected string|bool $outcome)
+    public function __construct(
+        protected bool $outcome,
+        protected ?string $success = null,
+        protected ?string $failure = null
+    )
     {
     }
 
@@ -17,12 +21,12 @@ readonly class Result implements \Stringable
 
     public function failed(): bool
     {
-        return $this->outcome === false;
+        return $this->outcome !== true;
     }
 
-    public function message(): string
+    public function message(): ?string
     {
-        return (string)$this->outcome;
+        return $this->passed() ? $this->success : $this->failure;
     }
 
     public function __toString(): string

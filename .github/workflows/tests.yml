@@ -1,0 +1,30 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.run-on }}
+
+    strategy:
+      matrix:
+        php: [8.2, 8.3]
+        run-on: [ubuntu-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, posix, bcmath, intl
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer update --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: vendor/bin/pest

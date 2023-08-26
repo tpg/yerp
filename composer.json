@@ -25,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TPG\\Validator\\Tests\\": "tests/"
+            "TPG\\Yerp\\Tests\\": "tests/"
         }
     },
     "config": {

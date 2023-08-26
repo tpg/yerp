@@ -12,7 +12,8 @@ abstract class AbstractRule
 
     public function __construct(
         public readonly bool $last = false,
-        public readonly ?string $message = null,
+        public readonly ?string $success = null,
+        public readonly ?string $failure = null,
     )
     {
     }
@@ -21,11 +22,6 @@ abstract class AbstractRule
 
     protected function getResult(bool $passed): Result
     {
-        return new Result($passed ?: $this->fail());
-    }
-
-    protected function fail(): false|string
-    {
-        return $this->message ?: false;
+        return new Result($passed, $this->success, $this->failure);
     }
 }

@@ -8,9 +8,9 @@ use TPG\Yerp\Validator;
 it('can validate object properties', function () {
 
     $object = new class {
-        #[Rules\Required, Rules\StringType]
+        #[Rules\Required]
         public string $name = 'John Doe';
-        #[Rules\Required, Rules\StringType, Rules\Email]
+        #[Rules\Required, Rules\Email]
         public string $email = 'bad-email';
     };
 
@@ -26,7 +26,10 @@ it('can validate object properties', function () {
 it('can have custom validation messages', function () {
 
     $object = new class {
-        #[Rules\Required(message: 'The name field is required')]
+        #[Rules\Required(
+            success: 'success message',
+            failure: 'failure message',
+        )]
         public string $name = '';
     };
 
@@ -34,21 +37,29 @@ it('can have custom validation messages', function () {
     $validated = $validator->validate();
 
     expect($validated->property('name', Rules\Required::class)->message())
-        ->toBe('The name field is required')
-        ->and((string)$validated->property('name', Rules\Required::class))->toEqual('The name field is required');
+        ->toBe('failure message')
+        ->and((string)$validated->property('name', Rules\Required::class))->toEqual('failure message');
+
+    $object->name = 'Someone';
+
+    $validated = $validator->validate();
+
+    expect($validated->property('name', Rules\Required::class)->message())
+        ->toBe('success message')
+        ->and((string)$validated->property('name', Rules\Required::class))->toEqual('success message');
 });
 
 it('can stop of a rule marked as last', function () {
 
     $object = new class {
-        #[Rules\Required, Rules\StringType(last: true), Rules\Email]
+        #[Rules\Required, Rules\Equal('email@example2.test', last: true), Rules\Email]
         public string $email = 'email@example.test';
     };
 
     $validator = new Validator($object);
     $validated = $validator->validate();
 
-    expect($validated->results('email'))->toHaveKey(Rules\StringType::class)
+    expect($validated->results('email'))->toHaveKey(Rules\Equal::class)
         ->and($validated->results('email'))->not->toHaveKey(Rules\Email::class);
 });
 

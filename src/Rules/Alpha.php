@@ -8,10 +8,10 @@ use Attribute;
 use TPG\Yerp\Result;
 
 #[Attribute]
-class ArrayType extends AbstractRule
+class Alpha extends AbstractRule
 {
     public function validate(mixed $value): Result
     {
-        return $this->getResult(is_array($value));
+        return $this->getResult(ctype_alpha($value));
     }
 }

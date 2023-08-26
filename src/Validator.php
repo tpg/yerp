@@ -9,7 +9,7 @@ use ReflectionProperty;
 use TPG\Yerp\Contracts\ValidatorInterface;
 use TPG\Yerp\Rules\AbstractRule;
 
-readonly class Validator implements ValidatorInterface
+class Validator implements ValidatorInterface
 {
     public array $errors;
 
@@ -40,9 +40,9 @@ readonly class Validator implements ValidatorInterface
 
             assert($rule instanceof AbstractRule);
 
-            $errors[$attribute->getName()] = $rule->validate($property->getValue($this->source));
+            $errors[$attribute->getName()] = $success = $rule->validate($property->getValue($this->source));
 
-            if ($rule->last) {
+            if ($rule->last && $success->failed()) {
                 break;
             }
         }

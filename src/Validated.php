@@ -9,18 +9,21 @@ use TPG\Yerp\Exceptions\InvalidProperty;
 use TPG\Yerp\Exceptions\InvalidRuleException;
 use TPG\Yerp\Rules\AbstractRule;
 
+/**
+ * @template TRuleClass of AbstractRule
+ */
 readonly class Validated
 {
     /**
      * @param array<ReflectionProperty> $properties
-     * @param array<string, <class-string, bool>> $results
+     * @param array<string, <class-string<TRuleClass>, bool>> $results
      */
     public function __construct(protected array $properties, protected array $results)
     {
     }
 
     /**
-     * @return array<string, <class-string, bool>>
+     * @return array<class-string<TRuleClass>, bool>
      * @throws InvalidProperty
      */
     public function results(string $property): array
@@ -34,7 +37,7 @@ readonly class Validated
 
     /**
      * @param string<class-string> $rule
-     * @throws InvalidRuleException
+     * @throws InvalidRuleException|InvalidProperty
      */
     public function property(string $property, string $rule): Result
     {
