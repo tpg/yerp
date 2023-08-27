@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.3 - 2023-08-27
+
+- [feat] Added support to get messages for all the class properties.
+
 ## v0.0.2 - 2023-08-26
 
 A few changes to make quick validation of an entire class a little easier.
