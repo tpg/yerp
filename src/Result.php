@@ -9,7 +9,8 @@ readonly class Result implements \Stringable
     public function __construct(
         protected bool $outcome,
         protected ?string $success = null,
-        protected ?string $failure = null
+        protected ?string $failure = null,
+        protected ?array $messages = null,
     ) {
     }
 
@@ -23,8 +24,12 @@ readonly class Result implements \Stringable
         return $this->outcome !== true;
     }
 
-    public function message(): ?string
+    public function message(): string|array|null
     {
+        if ($this->messages) {
+            return $this->messages;
+        }
+
         return $this->passed() ? $this->success : $this->failure;
     }
 

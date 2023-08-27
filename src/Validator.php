@@ -20,13 +20,13 @@ class Validator implements ValidatorInterface
     public function validate(): Validated
     {
         $properties = (new ReflectionClass($this->source))->getProperties(ReflectionProperty::IS_PUBLIC);
-        $errors = [];
+        $results = [];
 
         foreach ($properties as $property) {
-            $errors[$property->getName()] = $this->validateProperty($property);
+            $results[$property->getName()] = $this->validateProperty($property);
         }
 
-        return new Validated($properties, $errors);
+        return new Validated($properties, $results);
     }
 
     protected function validateProperty(ReflectionProperty $property): array

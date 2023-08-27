@@ -46,7 +46,8 @@ readonly class Validated
 
         if (! $rule) {
             $filter = array_filter($result, fn (Result $result) => $result->failed());
-            return new Result(count($filter) === 0);
+            $messages = array_map(fn (Result $result) => $result->message(), $result);
+            return new Result(count($filter) === 0, messages: $messages);
         }
 
         if (! array_key_exists($rule, $result)) {
@@ -66,5 +67,15 @@ readonly class Validated
     public function failed(): bool
     {
         return ! $this->passed();
+    }
+
+    public function messages(): array
+    {
+        $messages = [];
+        foreach ($this->properties as $property) {
+            $messages[$property->name] = $this->property($property->name)->message();
+        }
+
+        return $messages;
     }
 }

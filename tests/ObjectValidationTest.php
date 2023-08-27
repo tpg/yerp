@@ -76,6 +76,41 @@ it('can have custom validation messages', function () {
         ->and((string)$validated->property('name', Rules\Required::class))->toEqual('success message');
 });
 
+it('can get all validation messages for a property', function () {
+    $option = new class {
+        #[Rules\Required(success: 'Has email'), Rules\Email(failure: 'Not a valid email')]
+        public string $email = 'test@bad-email';
+    };
+
+    $validated = (new Validator($option))->validate();
+
+    expect($validated->property('email')->message())->toEqual([
+        Rules\Required::class => 'Has email',
+        Rules\Email::class => 'Not a valid email',
+    ]);
+});
+
+it('can get all the validation messages for an object', function () {
+    $option = new class {
+        #[Rules\Required(failure: 'Name is required')]
+        public string $name = '';
+        #[Rules\Required(success: 'Has email'), Rules\Email(failure: 'Not a valid email')]
+        public string $email = 'test@bad-email';
+    };
+
+    $validated = (new Validator($option))->validate();
+
+    expect($validated->messages())->toEqual([
+        'name' => [
+            Rules\Required::class => 'Name is required',
+        ],
+        'email' => [
+            Rules\Required::class => 'Has email',
+            Rules\Email::class => 'Not a valid email',
+        ],
+    ]);
+});
+
 it('can stop on a failed rule marked as last', function () {
 
     $object = new class () {
