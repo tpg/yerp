@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TPG\Yerp;
 
-readonly class Result implements \Stringable
+readonly class Result
 {
     public function __construct(
         protected bool $outcome,
@@ -30,13 +30,6 @@ readonly class Result implements \Stringable
             return $this->messages;
         }
 
-        return $this->passed()
-            ? ($this->success ?? 'success')
-            : ($this->failure ?? 'failure');
-    }
-
-    public function __toString(): string
-    {
-        return $this->message();
+        return $this->passed() ? $this->success : $this->failure;
     }
 }

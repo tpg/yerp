@@ -10,6 +10,7 @@ it('can validate object properties', function () {
     $object = new class () {
         #[Rules\Required]
         public string $name = 'John Doe';
+        public string $notValidated = 'Not Validated';
         #[Rules\Required, Rules\Email]
         public string $email = 'bad-email';
     };
@@ -17,7 +18,8 @@ it('can validate object properties', function () {
     $validator = new Validator($object);
     $validated = $validator->validate();
 
-    expect($validated->property('name', Rules\Required::class)->passed())->toBeTrue()
+    expect(array_keys($validated->propertyNames))->not->toContain('notValidated')
+        ->and($validated->property('name', Rules\Required::class)->passed())->toBeTrue()
         ->and($validated->property('email', Rules\Required::class)->passed())->toBeTrue()
         ->and($validated->property('email', Rules\Required::class)->failed())->toBeFalse()
         ->and($validated->property('email', Rules\Email::class)->passed())->toBeFalse();
@@ -65,7 +67,7 @@ it('can have custom validation messages', function () {
 
     expect($validated->property('name', Rules\Required::class)->message())
         ->toBe('failure message')
-        ->and((string)$validated->property('name', Rules\Required::class))->toEqual('failure message');
+        ->and((string)$validated->property('name', Rules\Required::class)->message())->toEqual('failure message');
 
     $object->name = 'Someone';
 
@@ -73,7 +75,7 @@ it('can have custom validation messages', function () {
 
     expect($validated->property('name', Rules\Required::class)->message())
         ->toBe('success message')
-        ->and((string)$validated->property('name', Rules\Required::class))->toEqual('success message');
+        ->and((string)$validated->property('name', Rules\Required::class)->message())->toEqual('success message');
 });
 
 it('can get all validation messages for a property', function () {

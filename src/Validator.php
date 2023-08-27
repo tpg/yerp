@@ -19,7 +19,11 @@ class Validator implements ValidatorInterface
 
     public function validate(): Validated
     {
-        $properties = (new ReflectionClass($this->source))->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = array_filter(
+            (new ReflectionClass($this->source))->getProperties(ReflectionProperty::IS_PUBLIC),
+            fn (ReflectionProperty $property) => count($property->getAttributes()) > 0
+        );
+
         $results = [];
 
         foreach ($properties as $property) {

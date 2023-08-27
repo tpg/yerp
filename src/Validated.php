@@ -15,11 +15,17 @@ use TPG\Yerp\Rules\AbstractRule;
 readonly class Validated
 {
     /**
+     * @var array|string[]
+     */
+    public array $propertyNames;
+
+    /**
      * @param array<ReflectionProperty> $properties
      * @param array<string, array<class-string<TRuleClass>, bool>> $results
      */
     public function __construct(protected array $properties, protected array $results)
     {
+        $this->propertyNames = array_map(fn (ReflectionProperty $property) => $property->name, $properties);
     }
 
     /**
@@ -73,9 +79,12 @@ readonly class Validated
     {
         $messages = [];
         foreach ($this->properties as $property) {
-            $messages[$property->name] = $this->property($property->name)->message();
+            $messages[$property->name] = array_filter(
+                $this->property($property->name)->message(),
+                fn ($message) => ! is_null($message)
+            );
         }
 
-        return $messages;
+        return array_filter($messages, fn ($rules) => ! empty($rules));
     }
 }
