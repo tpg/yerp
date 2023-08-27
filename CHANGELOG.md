@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.0.4 - 2023-08-27
+
+- [feat] Added a `propertyNames` property to the `Validated` class
+- [change] Rules without a message set will return null. Use `passed()` or `failed()` methods to determine passing validations.
+- [change] The `Result` class can no longer be cast as a string. Use the `message()` method instead.
+- [fix] Properties without rules will no longer be included in the results.
+
 ## v0.0.3 - 2023-08-27
 
 - [feat] Added support to get messages for all the class properties.
