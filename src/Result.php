@@ -30,6 +30,8 @@ readonly class Result
             return $this->messages;
         }
 
+        $failure = $this->failure ?? 'invalid';
+
         return $this->passed() ? $this->success : $this->failure;
     }
 }
