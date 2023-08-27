@@ -30,7 +30,9 @@ readonly class Result implements \Stringable
             return $this->messages;
         }
 
-        return $this->passed() ? $this->success : $this->failure;
+        return $this->passed()
+            ? ($this->success ?? 'success')
+            : ($this->failure ?? 'failure');
     }
 
     public function __toString(): string
