@@ -2,7 +2,7 @@
 
 # Yerp
 
-Yerp is an object property validation library for PHP. It was written to provide simply validation for some other libraries, but it has some value elsewhere.
+Yerp is an object property validation library for PHP. It was written to provide simply validation for some other libraries, but it may have some value elsewhere.
 
 Yerp uses PHP Attributes to set validation rules on public properties. You can then pass an instance of that object to the validator and get a result. Results are are boolean, so there's no translation or language requirements. You can specify your own messages based on the result.
 
@@ -34,11 +34,13 @@ class User
 }
 ```
 
-There are a number of build in rules and you can easily add your own.
+There are a number of built-in rules and you can easily add your own.
+
+> Note that only public properties can validated.
 
 ## Running the validator
 
-To validate the values of an instance, pass it to the `Validator` class and call the `validate` method. This will return an instance of `Validated` which provides access to the results of each rule on each property.
+To validate an object, pass it to the `Validator` class and call the `validate` method. This will return an instance of `Validated` which provides access to the results of each rule on each property.
 
 ```php
 class UserController
@@ -60,43 +62,36 @@ class UserController
 
 ## Getting the results
 
-The `Validated` class provides two methods you can use: `results` and `property`. The `results` method returns an array of results, and the `property` method can be used to get to the result of a particular rule. The `property` method requires the name of the property and the attribute class name. It returns an instance of `Result` which provides a simple `passed` method:
+The `Validated` class provides a `property` method which you can use to get to the result of a particular property. The `property` method returns an instance of `Result`. You can use the provided `passed` method to test the result of a given property:
 
 ```php
 $validated = (new Validator($user))->validate();
 
-$validated->property('firstName', Rules\Required::class)->passed();
+$validated->property('firstName')->passed();
 ```
 
-The `passed` method returns a boolean representing the validation result of that rule. There is also a `failed` method which returns the exact opposite;
+The `passed` method returns a boolean representing the validation result of that property. There is also a `failed` method which returns the exact opposite:
 
 ```php
-$validated->property('firstName', Rules\Required::class)->failed();
+$validated->property('firstName')->failed();
 ```
 
-The `results` method requires just the name of the property and returns an array keyed by the attribute class names:
+If you want to know the result of a specific rule on the property, you can pass the class name of the rule to the `property` method:
 
 ```php
-$results = $validated->results('emailAddress');
-
-/**
- * [
- *     'TPG\Yerp\Rules\Required' => true,
- *     'TPG\Yerp\Rules\Email' => true,
- * ]
- **/
+$validated->property('firstName', Rule\Required::class)->passed();
 ```
 
 ## Stopping on the first error
 
-All validation rules will be evaluated in the order they appear. However you can tell Yerp to stop validating the rest of the rules if a specific one fails. You can do this by passing `true` to the `last` property on any rule:
+All validation rules will be evaluated in the order they appear. You can tell Yerp to stop validating the rest of the rules if a specific one fails. You can do this by passing `true` to the `last` property on any rule:
 
 ```php
 #[Rule\Nullable, Rules\Email(last: true), Rule\Equal('test@example.com')]
 public string $emailAddress;
 ```
 
-In the example above, if the `Email` rule fails, then the `Equal` rule will not be evaluated. If the `Email` rule DOES pass, then the `Equal` rule will be evaluated and will be present in the results. If you end the evaluation by using `last`, then any rules that come later will not be included. This is important because if you try to check the outcome of a rule that doesn't exist in the results, you'll get an `InvalidRuleException`.
+In the example above, if the `Email` rule fails, then the `Equal` rule will not be evaluated. If the `Email` rule DOES pass, then the `Equal` rule will be evaluated and will be present in the results. If you end the evaluation by using `last`, then any rules that come later will not be included in the results set. This is important because if you try to check the outcome of a rule that doesn't exist in the results, you'll get an `InvalidRuleException`.
 
 ## Setting messages per rule
 
@@ -170,11 +165,11 @@ You can ensure that a property is equal to a specific value. Simply pass the req
 propert ?string $someString;
 ```
 
-There is also a `NotEqual` rule that works in the same way by opposite.
+There is also an opposing `NotEqual` rule.
 
 ### Email
 
-A common validation is to ensure that a string is a valid email address:
+A common validation rule is to ensure that a string is a valid email address:
 
 ```php
 #[Rules\Email]
@@ -199,7 +194,7 @@ The `Length` rule allows you to specify a minimum and/or maximum length. If the 
 property string $someString;
 ```
 
-You don't need to specify both, but you must specify at least a minimum or maximum value.
+You don't need to specify both, but you must specify at least one value.
 
 ### Numeric
 
@@ -221,9 +216,9 @@ property string $regexString;
 
 ## Writing new rules
 
-Yerp only provides a small number of rules. This was mainly because they're the only ones we needed. We might add new rules as we need them more often, but it's simply to add your own rules without needing to ask.
+Yerp only provides a small number of rules. This was mainly because they're the only ones we needed at time. We might add new rules as we need them more often, but it's simple to add your own rules without needing to ask.
 
-Create a new class to contain your rule logic extending the `TPG\Yerp\Rules\AbstractRule` class. Add  `#[Attribute]` to the class definition.
+Create a new class to contain your rule logic extending the `TPG\Yerp\Rules\AbstractRule` class and add  `#[Attribute]` to the class definition.
 
 You'll need to implement the required `validate` method which returns a `TPG\Yerp\Result`. You can use the `getResult` method, which takes a boolean value, to return a new `Result` instance:
 
@@ -258,4 +253,32 @@ class Article
 }
 ```
 
-Your new rule gets the same `last`, `success` and `failure` parameters.
+Your new rule gets the same `last`, `success` and `failure` parameters. If your rule needs to accept a value, simply specify it in a constructor:
+
+```php
+namespace CustomRules;
+
+use Attribute;
+use TPG\Yerp\Rules\AbstractRule;
+use TPG\Yerp\Result;
+
+use DelimitedRule extends AbstractRule
+{
+    public function __construct(protected string $delimiter = ',')
+    {
+    }
+
+    public function validate(string $value): Result
+    {
+        return $this->getResult(str_contains($value, $this->delimited));
+    }
+}
+```
+
+## Credits
+
+- [Warrick Bayman](https://github.com/warrickbayman)
+
+## License
+
+The MIT License (MIT). See the [LICENSE.md]() file for more information.
